@@ -1,0 +1,15 @@
+# init project
+
+python3 -m poetry init
+python3 -m poetry env use python3
+python3 -m poetry add --group dev flake8 black isort mypy pytest pytest-cov poethepoet
+
+# run project
+python3 -m poetry run python src/main.py
+
+# test project
+python3 -m poetry run pytest -v
+python3 -m poetry run pytest --cov=src --cov-report=html
+
+# check project
+python3 -m poetry run poe -q check
