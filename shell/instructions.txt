@@ -16,3 +16,11 @@ python3 -m poetry run pytest --cov=src --cov-report=html
 
 # check project
 python3 -m poetry run poe -q check
+
+# to commit project
+git add .
+git commit -m "added homework"
+git push --force
+
+# create pull request
+gh pr create --base dev --head homework16_1 --title "Homework 16.1" --body "added task files"

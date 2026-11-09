@@ -1,6 +1,12 @@
 import pytest
 
-from main import Product, Category, CategoryIterator
+from main import (
+    Category,
+    CategoryIterator,
+    LawnGrass,
+    Product,
+    Smartphone,
+)
 
 
 @pytest.fixture
@@ -48,7 +54,7 @@ def test_new_product():
         "name": "Samsung",
         "description": "Description",
         "price": 100.0,
-        "quantity": 10
+        "quantity": 10,
     }
 
     product = Product.new_product(product_data)
@@ -100,12 +106,8 @@ def test_products_getter():
 
     category = Category("Смартфоны", "Описание", [product])
 
-    assert category.products == (
-        "Samsung, 100.0 руб. Остаток: 10 шт.\n"
-    )
+    assert category.products == "Samsung, 100.0 руб. Остаток: 10 шт.\n"
 
-
-# Тесты нового функционала
 
 def test_product_str():
     product = Product("Samsung", "Description", 80, 15)
@@ -133,9 +135,7 @@ def test_category_str():
 
     category = Category("Смартфоны", "Описание", [product1, product2])
 
-    assert str(category) == (
-        "Смартфоны, количество продуктов: 13 шт."
-    )
+    assert str(category) == "Смартфоны, количество продуктов: 13 шт."
 
 
 def test_category_str_empty():
@@ -186,3 +186,191 @@ def test_category_add_invalid():
 
     with pytest.raises(TypeError):
         category.add_product("Samsung")
+
+
+# Тесты классов-наследников
+
+
+def test_smartphone_init():
+    smartphone = Smartphone(
+        "Samsung",
+        "Description",
+        100000.0,
+        5,
+        95.5,
+        "S23",
+        256,
+        "Black",
+    )
+
+    assert smartphone.name == "Samsung"
+    assert smartphone.description == "Description"
+    assert smartphone.price == 100000.0
+    assert smartphone.quantity == 5
+    assert smartphone.efficiency == 95.5
+    assert smartphone.model == "S23"
+    assert smartphone.memory == 256
+    assert smartphone.color == "Black"
+
+
+def test_lawn_grass_init():
+    grass = LawnGrass(
+        "Газонная трава",
+        "Описание",
+        500.0,
+        20,
+        "Россия",
+        "7 дней",
+        "Зеленый",
+    )
+
+    assert grass.name == "Газонная трава"
+    assert grass.description == "Описание"
+    assert grass.price == 500.0
+    assert grass.quantity == 20
+    assert grass.country == "Россия"
+    assert grass.germination_period == "7 дней"
+    assert grass.color == "Зеленый"
+
+
+def test_smartphone_inheritance():
+    smartphone = Smartphone(
+        "Samsung",
+        "Description",
+        100.0,
+        5,
+        95.5,
+        "S23",
+        256,
+        "Black",
+    )
+
+    assert isinstance(smartphone, Product)
+
+
+def test_lawn_grass_inheritance():
+    grass = LawnGrass(
+        "Газон",
+        "Описание",
+        500.0,
+        10,
+        "Россия",
+        "7 дней",
+        "Зеленый",
+    )
+
+    assert isinstance(grass, Product)
+
+
+# Тесты ограничения сложения
+
+
+def test_smartphone_add():
+    smartphone1 = Smartphone(
+        "Samsung",
+        "Description",
+        100,
+        2,
+        90,
+        "S23",
+        256,
+        "Black",
+    )
+    smartphone2 = Smartphone(
+        "Iphone",
+        "Description",
+        200,
+        3,
+        95,
+        "15",
+        512,
+        "White",
+    )
+
+    assert smartphone1 + smartphone2 == 800
+
+
+def test_lawn_grass_add():
+    grass1 = LawnGrass(
+        "Газон 1",
+        "Описание",
+        500,
+        10,
+        "Россия",
+        "7 дней",
+        "Зеленый",
+    )
+    grass2 = LawnGrass(
+        "Газон 2",
+        "Описание",
+        300,
+        5,
+        "США",
+        "5 дней",
+        "Зеленый",
+    )
+
+    assert grass1 + grass2 == 6500
+
+
+def test_add_different_classes():
+    smartphone = Smartphone(
+        "Samsung",
+        "Description",
+        100,
+        2,
+        90,
+        "S23",
+        256,
+        "Black",
+    )
+    grass = LawnGrass(
+        "Газон",
+        "Описание",
+        500,
+        10,
+        "Россия",
+        "7 дней",
+        "Зеленый",
+    )
+
+    with pytest.raises(TypeError):
+        smartphone + grass
+
+
+# Тесты добавления наследников в категорию
+
+
+def test_category_add_smartphone():
+    smartphone = Smartphone(
+        "Samsung",
+        "Description",
+        100,
+        2,
+        90,
+        "S23",
+        256,
+        "Black",
+    )
+    category = Category("Смартфоны", "Описание", [])
+
+    category.add_product(smartphone)
+
+    assert "Samsung" in category.products
+
+
+def test_category_add_lawn_grass():
+    grass = LawnGrass(
+        "Газон",
+        "Описание",
+        500,
+        10,
+        "Россия",
+        "7 дней",
+        "Зеленый",
+    )
+    category = Category("Трава", "Описание", [])
+
+    category.add_product(grass)
+
+    assert "Газон" in category.products
