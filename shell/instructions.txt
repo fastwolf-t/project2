@@ -1,0 +1,26 @@
+# init project
+
+# nigger
+python3 -m poetry install --with dev
+
+python3 -m poetry init
+python3 -m poetry env use python3
+python3 -m poetry add --group dev flake8 black isort mypy pytest pytest-cov poethepoet
+
+# run project
+python3 -m poetry run python src/main.py
+
+# test project
+python3 -m poetry run pytest -v
+python3 -m poetry run pytest --cov=src --cov-report=html
+
+# check project
+python3 -m poetry run poe -q check
+
+# to commit project
+git add .
+git commit -m "added homework"
+git push --set-upstream origin homework16_2 --force
+
+# create pull request
+gh pr create --base dev --head homework16_2 --title "Homework 16.2" --body "added abstraction and base classes"
