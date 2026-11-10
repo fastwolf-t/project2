@@ -20,7 +20,7 @@ python3 -m poetry run poe -q check
 # to commit project
 git add .
 git commit -m "added homework"
-git push --force
+git push --set-upstream origin homework16_2 --force
 
 # create pull request
-gh pr create --base dev --head homework16_1 --title "Homework 16.1" --body "added task files"
+gh pr create --base dev --head homework16_2 --title "Homework 16.2" --body "added abstraction and base classes"
