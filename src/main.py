@@ -22,6 +22,11 @@ class BaseProduct(ABC):
         price: float,
         quantity: int,
     ):
+        if quantity == 0:
+            raise ValueError(
+                "Товар с нулевым количеством не может быть добавлен"
+            )
+
         self.name = name
         self.description = description
         self.__price = price
@@ -140,6 +145,14 @@ class Category:
         total_quantity = sum(product.quantity for product in self.__products)
         return f"{self.name}, количество продуктов: " f"{total_quantity} шт."
 
+    def middle_price(self) -> float:
+        """Возвращает среднюю цену товаров категории."""
+        try:
+            total_price = sum(product.price for product in self.__products)
+            return total_price / len(self.__products)
+        except ZeroDivisionError:
+            return 0
+
     def get_products_list(self) -> list[Product]:
         return self.__products.copy()
 
@@ -167,6 +180,24 @@ class CategoryIterator:
 
 
 if __name__ == "__main__":
+    try:
+        Product(
+            "Бракованный товар",
+            "Неверное количество",
+            1000.0,
+            0,
+        )
+    except ValueError:
+        print(
+            "Возникла ошибка ValueError при попытке добавить "
+            "продукт с нулевым количеством"
+        )
+    else:
+        print(
+            "Не возникла ошибка ValueError при попытке добавить "
+            "продукт с нулевым количеством"
+        )
+
     product1 = Product(
         "Samsung Galaxy S23 Ultra",
         "256GB, Серый цвет, 200MP камера",
@@ -188,46 +219,14 @@ if __name__ == "__main__":
 
     category1 = Category(
         "Смартфоны",
-        "Смартфоны для коммуникации и повседневных задач",
+        "Категория смартфонов",
         [product1, product2, product3],
     )
+    print(category1.middle_price())
 
-    print(category1)
-    print(category1.products)
-    print(f"Категорий: {Category.category_count}")
-    print(f"Товаров: {Category.product_count}")
-
-    smartphone = Smartphone(
-        "Samsung Galaxy S24",
-        "256GB, черный",
-        120000.0,
-        3,
-        95.5,
-        "Galaxy S24",
-        256,
-        "Черный",
+    category_empty = Category(
+        "Пустая категория",
+        "Категория без продуктов",
+        [],
     )
-
-    grass = LawnGrass(
-        "Газонная трава",
-        "Устойчивая к засухе",
-        1500.0,
-        10,
-        "Россия",
-        "7-14 дней",
-        "Зеленый",
-    )
-
-    category2 = Category(
-        "Разное",
-        "Товары разных типов",
-        [smartphone, grass],
-    )
-
-    print(category2)
-
-    for product in category2:
-        print(product)
-
-    print(f"Всего категорий: {Category.category_count}")
-    print(f"Всего товаров: {Category.product_count}")
+    print(category_empty.middle_price())

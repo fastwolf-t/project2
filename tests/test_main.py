@@ -51,6 +51,7 @@ def lawn_grass():
 
 # BaseProduct и Product
 
+
 def test_base_product_is_abstract():
     with pytest.raises(TypeError):
         BaseProduct("Товар", "Описание", 100.0, 1)
@@ -65,6 +66,14 @@ def test_product_init(product):
     assert product.description == "Описание товара"
     assert product.price == 100.0
     assert product.quantity == 10
+
+
+def test_product_zero_quantity():
+    with pytest.raises(
+        ValueError,
+        match="Товар с нулевым количеством не может быть добавлен",
+    ):
+        Product("Samsung", "Описание", 100.0, 0)
 
 
 def test_product_price_is_private(product):
@@ -109,7 +118,6 @@ def test_product_str(product):
 
 def test_product_add(product):
     another_product = Product("Iphone", "Описание", 200.0, 2)
-
     assert product + another_product == 1400.0
 
 
@@ -119,6 +127,7 @@ def test_product_add_rejects_non_product(product):
 
 
 # PrintInfoMixin
+
 
 def test_mixin_prints_product_creation_info(capsys):
     Product("Samsung", "Описание", 100.0, 2)
@@ -152,6 +161,7 @@ def test_mixin_prints_lawn_grass_creation_info(capsys):
 
 
 # Классы-наследники
+
 
 def test_smartphone_init(smartphone):
     assert smartphone.name == "Samsung"
@@ -220,6 +230,7 @@ def test_products_of_different_classes_cannot_be_added(
 
 # Category
 
+
 def test_category_init(product):
     category = Category("Смартфоны", "Описание категории", [product])
 
@@ -257,9 +268,7 @@ def test_category_rejects_invalid_product():
 def test_category_products_property(product):
     category = Category("Смартфоны", "Описание", [product])
 
-    assert category.products == (
-        "Samsung, 100.0 руб. Остаток: 10 шт.\n"
-    )
+    assert category.products == "Samsung, 100.0 руб. Остаток: 10 шт.\n"
 
 
 def test_category_str(product):
@@ -268,9 +277,7 @@ def test_category_str(product):
         "Смартфоны", "Описание", [product, another_product]
     )
 
-    assert str(category) == (
-        "Смартфоны, количество продуктов: 13 шт."
-    )
+    assert str(category) == "Смартфоны, количество продуктов: 13 шт."
 
 
 def test_empty_category_str():
@@ -300,7 +307,23 @@ def test_category_accepts_product_subclasses(smartphone, lawn_grass):
     assert "Газонная трава" in category.products
 
 
+def test_category_middle_price(product):
+    another_product = Product("Iphone", "Описание", 200.0, 5)
+    category = Category(
+        "Смартфоны", "Описание", [product, another_product]
+    )
+
+    assert category.middle_price() == 150.0
+
+
+def test_category_middle_price_empty():
+    category = Category("Пустая категория", "Описание", [])
+
+    assert category.middle_price() == 0
+
+
 # CategoryIterator
+
 
 def test_category_iterator(product):
     another_product = Product("Iphone", "Описание", 200.0, 3)
